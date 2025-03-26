@@ -19,16 +19,14 @@ app.use(cors({
     const token = req.cookies?.access_token
     if (!token) return next();
 
-    req.session = {user:null};
 
     try {
         const data = jwt.verify(token, process.env.JWT_SECRET);
-        req.session.user = data;
+        req.user = data;
+        next();
     } catch (err) {
         console.error("Token inválido o expirado:", err.message);
     }
-
-    next();
 });
 
 

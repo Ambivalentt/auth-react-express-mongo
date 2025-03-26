@@ -38,6 +38,17 @@ class UserRepository {
             email: user.email
         }
     }
+
+    static async findById(id) {
+        const user = await User.findById(id);
+        if (!user) throw new Error("Usuario no encontrado");
+
+        return {
+            id: user._id,
+            name: user.name,
+            email: user.email
+        };
+    }
 }
 
 class Validation {

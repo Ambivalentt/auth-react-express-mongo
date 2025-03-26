@@ -1,9 +1,10 @@
-
 import { useState } from "react";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext.jsx"; // ✅ Importa el contexto
 
 const LoginForm = () => {
   const [form, setForm] = useState({ email: "", password: "" });
+  const { fetchUser } = useAuth(); // ✅ Obtiene la función para actualizar usuario
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -12,24 +13,21 @@ const LoginForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Datos enviados:", form); 
-    try{
-      const response = await fetch('http://localhost:3000/login',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        credentials:"include",
-        body:JSON.stringify(form)
-      })
-      
-      const data = await response.json();
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(form),
+      });
 
-      if (!response.ok) throw new Error(data.message || "Error en el login");
-      console.log('login successfull')
-      navigate("/");
-    }catch(err){
-      console.error('Error at login',err);
+      if (!response.ok) throw new Error("Error en el login");
+
+      await fetchUser(); // ✅ Actualiza el usuario inmediatamente
+      navigate("/"); // ✅ Redirige al usuario
+    } catch (err) {
+      console.error("Error al iniciar sesión", err);
     }
-
   };
 
   return (
@@ -67,6 +65,6 @@ const LoginForm = () => {
       </form>
     </div>
   );
-}
+};
 
-export default LoginForm
+export default LoginForm;
